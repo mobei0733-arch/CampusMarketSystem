@@ -13,6 +13,9 @@ public class CampusMarketSystem {
 
         panel.setLayout(new FlowLayout());
 
+        //设置窗口居中
+        frame.setLocationRelativeTo(null);
+
         //创建文本 用户名密码
         JLabel usernameLabel=new JLabel("用户名");
         JLabel passwordLabel=new JLabel("密码");
@@ -37,6 +40,28 @@ public class CampusMarketSystem {
         frame.add(panel);
 
         frame.setVisible(true);
+
+        //添加登录事件
+        loginButton.addActionListener(e ->{
+            //获取用户名密码
+            String username=usernameField.getText();
+            String password=passwordField.getText();
+            if(username.trim().equals("")||password.trim().equals("")){
+                JOptionPane.showMessageDialog(frame,"用户名或密码不能为空！");
+                return;
+            }
+            //登录成功
+            if(username.equals("admin")&&password.equals("123456")){
+                JOptionPane.showMessageDialog(frame,"登录成功");
+            }
+
+        });
+            //添加注册事件
+        registerButton.addActionListener(e ->{
+            JOptionPane.showMessageDialog(frame,"注册成功");
+        });
+
+
 
     }
 }
