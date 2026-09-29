@@ -56,12 +56,10 @@ public class CampusMarketSystem {
             }
 
         });
-            //添加注册事件
+            //添加注册事件,打开注册窗口
         registerButton.addActionListener(e ->{
-            JOptionPane.showMessageDialog(frame,"注册成功");
+            new RegisterFrame();
         });
-
-
 
     }
 }
