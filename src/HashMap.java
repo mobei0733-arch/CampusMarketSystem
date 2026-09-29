@@ -1,4 +1,4 @@
-public class MyHashMap {
+public class HashMap {
     private static int size=16;
     private Node[] table;
     private static class Node{
@@ -11,21 +11,21 @@ public class MyHashMap {
             this.value=value;
         }
     }
-    public MyHashMap(){
+
+    public HashMap(){
         table=new Node[size];
     }
-
 
     private int hash(int key){
         return key%size;
     }
-    //添加
+    //添加或修改
     public void put(int key,User value){
         int index=hash(key);
         Node current=table[index];
         while(current!=null){
             if(current.key==key){
-                current.value=value;
+                current.value=value;//修改用户名密码
                 return;
             }
             current=current.next;

@@ -4,7 +4,7 @@ import java.awt.*;
 public class RegisterFrame extends JFrame {
     private static int nextUserid=202600001;
 
-    public static MyHashMap users=new MyHashMap();
+    public static HashMap users=new HashMap();
 
     public RegisterFrame(){
         //设置窗口标题
