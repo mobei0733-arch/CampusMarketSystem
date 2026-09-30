@@ -4,14 +4,10 @@ import java.awt.*;
 public class CampusMarketSystem {
     public static void main(String[] args) {
         JFrame frame =new JFrame("校园市场交易管理系统");
-        frame.setSize(500,350);
+        frame.setSize(500,400);
 
         //关闭窗口时退出程序
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        JPanel panel=new JPanel();
-
-        panel.setLayout(new FlowLayout());
 
         //设置窗口居中
         frame.setLocationRelativeTo(null);
@@ -26,15 +22,38 @@ public class CampusMarketSystem {
         JButton loginButton=new JButton("登录");
         JButton registerButton=new JButton("注册");
 
-        //添加组件到面板  用户名
-        panel.add(usernameLabel);
-        panel.add(usernameField);
+        //创建面板
+        JPanel panel=new JPanel(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.NONE;
+
+        //添加组件到面板
+        // 用户名
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(usernameLabel, gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        panel.add(usernameField, gbc);
         //密码
-        panel.add(passwordLabel);
-        panel.add(passwordField);
-        //登录注册按钮
-        panel.add(loginButton);
-        panel.add(registerButton);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(passwordLabel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        panel.add(passwordField, gbc);
+        // 登录按钮
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.insets = new Insets(5, 60, 5, 5);
+        panel.add(loginButton, gbc);
+        // 注册按钮
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        panel.add(registerButton, gbc);
 
         //添加面板到窗口
         frame.add(panel);
@@ -45,15 +64,29 @@ public class CampusMarketSystem {
         loginButton.addActionListener(e ->{
             //获取用户名密码
             String username=usernameField.getText();
-            String password=passwordField.getText();
-            if(username.trim().equals("")||password.trim().equals("")){
+            String password=new String(passwordField.getPassword());
+
+            //判断用户名密码是否为空
+            if(username.trim().isEmpty()||password.trim().isEmpty()){
                 JOptionPane.showMessageDialog(frame,"用户名或密码不能为空！");
                 return;
             }
-            //登录成功
-            if(username.equals("admin")&&password.equals("123456")){
-                JOptionPane.showMessageDialog(frame,"登录成功");
+
+            User user = DataManager.userBST.search(username);
+            //判断用户名是否存在
+            if(user==null){
+                JOptionPane.showMessageDialog(frame,"用户名不存在！");
+                return;
             }
+
+            //判断密码是否正确
+            if(!user.getPassword().equals(password)){
+                JOptionPane.showMessageDialog(frame,"密码错误！");
+                return;
+            }
+            //登录成功
+            JOptionPane.showMessageDialog(frame,"登录成功");
+
 
         });
             //添加注册事件,打开注册窗口

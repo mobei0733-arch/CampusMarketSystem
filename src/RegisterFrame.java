@@ -1,10 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 
+
 public class RegisterFrame extends JFrame {
     private static int nextUserid=202600001;
-
-    public static HashMap users=new HashMap();
 
     public RegisterFrame(){
         //设置窗口标题
@@ -18,32 +17,51 @@ public class RegisterFrame extends JFrame {
         //设置窗口居中
         setLocationRelativeTo(null);
 
-        JPanel panel =new JPanel();
-        panel.setLayout(new FlowLayout());
+        JPanel panel =new JPanel(new GridBagLayout());
 
-        //注册组件
-        JLabel usernameLabel=new JLabel("用户名");
-        JLabel passwordLabel=new JLabel("密码");
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.NONE;
 
-        JTextField usernameField=new JTextField(20);
-        JPasswordField passwordField=new JPasswordField(20);
+        // 注册组件
+        JLabel usernameLabel = new JLabel("用户名");
+        JLabel passwordLabel = new JLabel("密码");
+        JLabel confirmPasswordLabel = new JLabel("确认密码");
 
-        JLabel confirmPasswordLabel=new JLabel("确认密码");
-        JPasswordField confirmField=new JPasswordField(20);
+        JTextField usernameField = new JTextField(10);
+        JPasswordField passwordField = new JPasswordField(10);
+        JPasswordField confirmField = new JPasswordField(10);
 
-        JButton registerButton=new JButton("注册");
+        JButton registerButton = new JButton("注册");
 
-        //添加组件到面板
-        panel.add(usernameLabel);
-        panel.add(usernameField);
+        // 用户名
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(usernameLabel, gbc);
 
-        panel.add(passwordLabel);
-        panel.add(passwordField);
+        gbc.gridx = 1;
+        panel.add(usernameField, gbc);
 
-        panel.add(confirmPasswordLabel);
-        panel.add(confirmField);
+        // 密码
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(passwordLabel, gbc);
 
-        panel.add(registerButton);
+        gbc.gridx = 1;
+        panel.add(passwordField, gbc);
+
+        // 确认密码
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(confirmPasswordLabel, gbc);
+
+        gbc.gridx = 1;
+        panel.add(confirmField, gbc);
+
+        // 注册
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        panel.add(registerButton, gbc);
 
         add(panel);
         setVisible(true);
@@ -54,7 +72,7 @@ public class RegisterFrame extends JFrame {
             String password=new String(passwordField.getPassword());
             String confirmPassword=new String(confirmField.getPassword());
             //判断用户名密码是否为空
-            if(username.equals("")||password.equals("")||confirmPassword.equals("")){
+            if(username.isEmpty()||password.isEmpty()||confirmPassword.isEmpty()){
                 JOptionPane.showMessageDialog(this,"用户名或密码不能为空！");
                 return;
             }
@@ -66,15 +84,16 @@ public class RegisterFrame extends JFrame {
             }
 
             //判断用户名是否已存在
-            if(users.containUsername(username)){
+            User olduser = DataManager.userBST.search(username);
+            if(olduser!=null){
                 JOptionPane.showMessageDialog(this,"用户名已存在！");
                 return;
             }
 
-
             //创建保存用户
             User user=new User(nextUserid,username,password);
-            users.put(nextUserid,user);
+            DataManager.users.put(nextUserid,user);
+            DataManager.userBST.insert(user);
             nextUserid++;
             //注册成功
             JOptionPane.showMessageDialog(this,"注册成功！");
