@@ -19,17 +19,17 @@ public class HashMap {
     private int hash(int key){
         return key%size;
     }
-    //添加或修改
+    //添加
     public void put(int key,User value){
         int index=hash(key);
         Node current=table[index];
-        while(current!=null){
-            if(current.key==key){
-                current.value=value;//修改用户名密码
-                return;
-            }
-            current=current.next;
-        }
+//        while(current!=null){
+//           if(current.key==key){
+//                current.value=value;//已存在，更新
+//              return;
+//           }
+//            current=current.next;
+//        }
         Node newNode=new Node(key,value);
         newNode.next=table[index];
         table[index]=newNode;
@@ -63,18 +63,6 @@ public class HashMap {
             }
             previous=current;
             current=current.next;
-        }
-        return false;
-    }
-    public boolean containUsername(String username){
-        for (int i = 0; i <size ; i++) {
-            Node current=table[i];
-            while(current!=null){
-                if(current.value.getUsername().equals(username)){
-                    return true;
-                }
-                current=current.next;
-            }
         }
         return false;
     }

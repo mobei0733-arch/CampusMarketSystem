@@ -45,7 +45,7 @@ public class CampusMarketSystem {
         loginButton.addActionListener(e ->{
             //获取用户名密码
             String username=usernameField.getText();
-            String password=passwordField.getText();
+            String password=new String(passwordField.getPassword());
             if(username.trim().equals("")||password.trim().equals("")){
                 JOptionPane.showMessageDialog(frame,"用户名或密码不能为空！");
                 return;

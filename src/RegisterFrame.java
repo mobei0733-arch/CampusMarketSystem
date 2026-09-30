@@ -4,8 +4,6 @@ import java.awt.*;
 public class RegisterFrame extends JFrame {
     private static int nextUserid=202600001;
 
-    public static HashMap users=new HashMap();
-
     public RegisterFrame(){
         //设置窗口标题
         setTitle("用户注册");
@@ -66,15 +64,16 @@ public class RegisterFrame extends JFrame {
             }
 
             //判断用户名是否已存在
-            if(users.containUsername(username)){
+
+            if(DataManager.userBST.search(username)){
                 JOptionPane.showMessageDialog(this,"用户名已存在！");
                 return;
             }
 
-
             //创建保存用户
             User user=new User(nextUserid,username,password);
-            users.put(nextUserid,user);
+            DataManager.users.put(nextUserid,user);
+            DataManager.userBST.insert(username);
             nextUserid++;
             //注册成功
             JOptionPane.showMessageDialog(this,"注册成功！");
