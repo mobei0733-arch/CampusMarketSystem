@@ -41,24 +41,27 @@ public class CampusMarketSystem {
         gbc.gridx = 0;
         gbc.gridy = 1;
         panel.add(passwordLabel, gbc);
-
         gbc.gridx = 1;
         gbc.gridy = 1;
         panel.add(passwordField, gbc);
-        // 登录按钮
+        // 登录
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.insets = new Insets(5, 60, 5, 5);
         panel.add(loginButton, gbc);
-        // 注册按钮
+        // 注册
         gbc.gridx = 1;
         gbc.gridy = 2;
         panel.add(registerButton, gbc);
 
-        //添加面板到窗口
         frame.add(panel);
 
         frame.setVisible(true);
+
+        //添加注册事件,打开注册窗口
+        registerButton.addActionListener(e ->{
+            new RegisterFrame();
+        });
 
         //添加登录事件
         loginButton.addActionListener(e ->{
@@ -86,13 +89,14 @@ public class CampusMarketSystem {
             }
             //登录成功
             JOptionPane.showMessageDialog(frame,"登录成功");
+            DataManager.currentUser=user;
 
+            new MainFrame();
 
+            //关闭登录窗口
+            frame.dispose();
         });
-            //添加注册事件,打开注册窗口
-        registerButton.addActionListener(e ->{
-            new RegisterFrame();
-        });
+
 
     }
 }
