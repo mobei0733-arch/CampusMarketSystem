@@ -2,14 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CampusMarketSystem {
-    public static void main(String[] args) {
+    public CampusMarketSystem() {
         JFrame frame =new JFrame("校园市场交易管理系统");
-        frame.setSize(500,400);
+        frame.setSize(600,450);
 
-        //关闭窗口时退出程序
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //设置窗口居中
         frame.setLocationRelativeTo(null);
 
         //创建文本 用户名密码
@@ -90,13 +88,27 @@ public class CampusMarketSystem {
             //登录成功
             JOptionPane.showMessageDialog(frame,"登录成功");
             DataManager.currentUser=user;
-
-            new MainFrame();
+            //判断用户角色
+            if(user.getRole().equals("admin")){
+                new AdminFrame();
+            }
+            else {
+                new MainFrame();
+            }
 
             //关闭登录窗口
             frame.dispose();
         });
-
-
     }
+    public static void main(String[] args) {
+
+        // 初始化管理员账号
+        DataManager.initAdmin();
+
+        // 打开登录界面
+        SwingUtilities.invokeLater(() -> {
+            new CampusMarketSystem();
+        });
+    }
+
 }

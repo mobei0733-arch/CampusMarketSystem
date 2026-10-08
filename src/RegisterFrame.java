@@ -6,15 +6,13 @@ public class RegisterFrame extends JFrame {
     private static int nextUserid=202600001;
 
     public RegisterFrame(){
-        //设置窗口标题
         setTitle("用户注册");
 
-        //设置窗口大小
+
         setSize(400,300);
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        //设置窗口居中
         setLocationRelativeTo(null);
 
         JPanel panel =new JPanel(new GridBagLayout());
@@ -91,7 +89,7 @@ public class RegisterFrame extends JFrame {
             }
 
             //创建保存用户
-            User user=new User(nextUserid,username,password);
+            User user=new User(nextUserid,username,password,"user");
             DataManager.users.put(nextUserid,user);
             DataManager.userBST.insert(user);
             nextUserid++;
