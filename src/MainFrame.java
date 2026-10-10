@@ -100,11 +100,10 @@ public class MainFrame extends JFrame {
 
         // 左侧按钮事件
         // 浏览商品
-        // 浏览商品
         GoodsListFrame goodsListFrame = new GoodsListFrame();
         contentPanel.add(goodsListFrame, "goods");
         goodsButton.addActionListener(e -> {
-            goodsListFrame.refreshGoods();
+            goodsListFrame.refreshGoodsList();
             cardLayout.show(contentPanel, "goods");
         });
 
@@ -125,6 +124,7 @@ public class MainFrame extends JFrame {
         // 默认显示欢迎页面
         cardLayout.show(contentPanel, "home");
 
+        setVisible(true);
     }
 
 
@@ -308,4 +308,5 @@ public class MainFrame extends JFrame {
 
         return panel;
     }
+
 }
