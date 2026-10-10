@@ -1,9 +1,9 @@
 import java.awt.*;
 import javax.swing.*;
 
-public class PublishGoodsFrame extends JPanel {
+public class PublishGoodsPanel extends JPanel {
     private String imagePath = "";
-    public PublishGoodsFrame() {
+    public PublishGoodsPanel() {
         setLayout(new BorderLayout());
 
         // 商品名称
@@ -133,8 +133,13 @@ public class PublishGoodsFrame extends JPanel {
             //保存商品
             DataManager.goodsList.add(goods);
 
-            //提示发布成功
-            JOptionPane.showMessageDialog(this, "商品发布成功");
+           //提示发布成功
+           JOptionPane.showMessageDialog(this, "商品发布成功");
+
+//// 调试信息
+//            System.out.println("商品发布成功：" + goods.getName());
+//            System.out.println("当前商品总数：" + DataManager.goodsList.size());
+//            System.out.println("图片路径：" + goods.getImagePath());
 
             // 清空输入框
             nameField.setText("");

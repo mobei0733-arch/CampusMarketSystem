@@ -122,6 +122,7 @@ public class UserBST {
             child=current.right;
         }
 
+
         if(parent==null){
             root=child;
         }

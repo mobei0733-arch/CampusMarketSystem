@@ -85,32 +85,26 @@ public class MainFrame extends JFrame {
         // 欢迎页面
         contentPanel.add(createPage("欢迎使用校园二手市场交易管理系统\n请选择左侧功能开始使用"), "home");
 
-
         // 我发布的商品
         contentPanel.add(createPage("我发布的商品"), "myGoods");
 
         // 我购买的商品
         contentPanel.add(createPage("我购买的商品"), "boughtGoods");
 
-        // 个人信息
-        contentPanel.add(createUserPage(), "user");
-
         add(contentPanel, BorderLayout.CENTER);
-
 
         // 左侧按钮事件
         // 浏览商品
-        // 浏览商品
-        GoodsListFrame goodsListFrame = new GoodsListFrame();
-        contentPanel.add(goodsListFrame, "goods");
+        GoodsListPanel goodsListPanel = new GoodsListPanel();
+        contentPanel.add(goodsListPanel, "goods");
         goodsButton.addActionListener(e -> {
-            goodsListFrame.refreshGoods();
+            goodsListPanel.refreshGoodsList();
             cardLayout.show(contentPanel, "goods");
         });
 
         // 发布商品
-        PublishGoodsFrame publishGoodsFrame = new PublishGoodsFrame();
-        contentPanel.add(publishGoodsFrame, "publish");
+        PublishGoodsPanel publishGoodsPanel = new PublishGoodsPanel();
+        contentPanel.add(publishGoodsPanel, "publish");
         publishButton.addActionListener(e -> cardLayout.show(contentPanel, "publish"));
 
         // 我发布的商品
@@ -119,12 +113,14 @@ public class MainFrame extends JFrame {
         // 我购买的商品
         boughtGoodsButton.addActionListener(e -> cardLayout.show(contentPanel, "boughtGoods"));
 
-        // 个人信息
+        // 修改个人信息
+        ChangeUser changeUser = new ChangeUser(welcomeLabel);
+        contentPanel.add(changeUser, "user");
         userButton.addActionListener(e -> cardLayout.show(contentPanel, "user"));
 
         // 默认显示欢迎页面
         cardLayout.show(contentPanel, "home");
-
+        setVisible(true);
     }
 
 
@@ -142,170 +138,4 @@ public class MainFrame extends JFrame {
         return panel;
     }
 
-
-    // 创建个人信息页面
-    private JPanel createUserPage() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
-
-        User user = DataManager.currentUser;
-
-        JLabel titleLabel = new JLabel("个人信息");
-        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 24));
-
-        JLabel usernameLabel = new JLabel("用户名：" + user.getUsername());
-
-        JLabel userIdLabel = new JLabel("用户 ID：" + user.getId());
-
-        JLabel roleLabel = new JLabel("用户角色：" + ("admin".equals(user.getRole()) ? "管理员" : "普通用户"));
-
-        //刷新当前用户信息
-        Runnable refreshInfo = () -> {
-            usernameLabel.setText("用户名：" + user.getUsername());
-
-            userIdLabel.setText("用户 ID：" + user.getId());
-
-            roleLabel.setText("用户角色：" + ("admin".equals(user.getRole()) ? "管理员" : "普通用户"));
-        };
-        refreshInfo.run();
-
-        // 修改用户名密码按钮
-        JButton changeUsernameButton = new JButton("修改用户名");
-
-        JButton changePasswordButton = new JButton("修改密码");
-
-        JButton switchAccountButton = new JButton("切换账号");
-
-        JPanel infoPanel = new JPanel(new GridLayout(0, 1, 10, 15));
-        infoPanel.setBackground(Color.WHITE);
-        infoPanel.setBorder(BorderFactory.createEmptyBorder(25, 40, 25, 40));
-
-        infoPanel.add(titleLabel);
-        infoPanel.add(usernameLabel);
-        infoPanel.add(userIdLabel);
-        infoPanel.add(roleLabel);
-        infoPanel.add(changeUsernameButton);
-        infoPanel.add(changePasswordButton);
-        infoPanel.add(switchAccountButton);
-        panel.add(infoPanel);
-
-        // 修改用户名
-        changeUsernameButton.addActionListener(e -> {
-            String newUsername = JOptionPane.showInputDialog(
-                    this,
-                    "请输入新的用户名：",
-                    user.getUsername());
-
-            // 点击取消
-            if (newUsername == null) {
-                return;
-            }
-
-            newUsername = newUsername.trim();
-
-            if (newUsername.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "用户名不能为空！");
-                return;
-            }
-
-            // 新旧用户名相同
-            if (newUsername.equals(user.getUsername())) {
-                return;
-            }
-
-            // 使用二叉搜索树检查用户名是否重复
-            if (DataManager.userBST.search(newUsername) != null) {
-                JOptionPane.showMessageDialog(this, "该用户名已经存在，请重新输入！");
-                return;
-            }
-
-            String oldUsername = user.getUsername();
-
-            // 先从二叉搜索树中删除旧索引
-            DataManager.userBST.delete(oldUsername);
-
-            // 修改用户对象
-            user.setUsername(newUsername);
-
-            // 插入新索引
-            DataManager.userBST.insert(user);
-
-            // 刷新个人信息和左侧用户名
-            refreshInfo.run();
-            welcomeLabel.setText("当前用户：" + newUsername);
-
-            JOptionPane.showMessageDialog(this, "用户名修改成功！");
-        });
-
-        // 修改密码
-        changePasswordButton.addActionListener(e -> {
-            JPasswordField oldPasswordField = new JPasswordField(15);
-
-            JPasswordField newPasswordField = new JPasswordField(15);
-
-            JPasswordField confirmPasswordField = new JPasswordField(15);
-
-            JPanel passwordPanel = new JPanel(new GridLayout(0, 1, 5, 5));
-
-            passwordPanel.add(new JLabel("原密码："));
-            passwordPanel.add(oldPasswordField);
-            passwordPanel.add(new JLabel("新密码："));
-            passwordPanel.add(newPasswordField);
-            passwordPanel.add(new JLabel("确认新密码："));
-            passwordPanel.add(confirmPasswordField);
-
-            int result = JOptionPane.showConfirmDialog(this,
-                    passwordPanel,
-                    "修改密码",
-                    JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE
-            );
-
-            if (result != JOptionPane.OK_OPTION) {
-                return;
-            }
-
-            String oldPassword = new String(oldPasswordField.getPassword());
-
-            String newPassword = new String(newPasswordField.getPassword());
-
-            String confirmPassword = new String(confirmPasswordField.getPassword());
-
-            // 验证原密码
-            if (!user.getPassword().equals(oldPassword)) {
-                JOptionPane.showMessageDialog(this, "原密码不正确！");
-                return;
-            }
-
-            if (newPassword.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "新密码不能为空！");
-                return;
-            }
-
-            if (!newPassword.equals(confirmPassword)) {
-                JOptionPane.showMessageDialog(this, "两次输入的新密码不一致！");
-                return;
-            }
-
-            user.setPassword(newPassword);
-
-            JOptionPane.showMessageDialog(
-                    this, "密码修改成功！"
-            );
-        });
-
-
-        // 切换账号
-        switchAccountButton.addActionListener(e -> {
-            int result = JOptionPane.showConfirmDialog(this, "确定要切换账号吗？", "切换账号", JOptionPane.YES_NO_OPTION);
-
-            if (result == JOptionPane.YES_OPTION) {
-                DataManager.currentUser = null;
-                dispose();
-                new CampusMarketSystem();
-            }
-        });
-
-        return panel;
-    }
 }

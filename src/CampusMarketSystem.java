@@ -87,6 +87,7 @@ public class CampusMarketSystem {
             }
             //登录成功
             JOptionPane.showMessageDialog(frame,"登录成功");
+
             DataManager.currentUser=user;
             //判断用户角色
             if(user.getRole().equals("admin")){

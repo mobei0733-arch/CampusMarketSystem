@@ -39,7 +39,7 @@ public class AdminFrame extends JFrame {
 
         // 查看商品
         goodsButton.addActionListener(e -> {
-            new GoodsListFrame();
+            new GoodsListPanel();
         });
 
         // 修改密码
@@ -49,14 +49,23 @@ public class AdminFrame extends JFrame {
 
         // 退出登录，返回登录界面
         logoutButton.addActionListener(e -> {
-            DataManager.currentUser = null;
+            int result = JOptionPane.showConfirmDialog(
+                    this,
+                    "确定退出登录吗？",
+                    "退出登录",
+                    JOptionPane.YES_NO_OPTION
+            );
+            if (result == JOptionPane.YES_OPTION) {
+                DataManager.currentUser = null;
 
-             new CampusMarketSystem();
+                new CampusMarketSystem();
 
-            dispose();
+                dispose();
+            }
         });
 
         setVisible(true);
     }
 }
+
 
