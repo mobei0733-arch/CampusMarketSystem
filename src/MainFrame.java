@@ -85,8 +85,7 @@ public class MainFrame extends JFrame {
         // 欢迎页面
         contentPanel.add(createPage("欢迎使用校园二手市场交易管理系统\n请选择左侧功能开始使用"), "home");
 
-        // 我发布的商品
-        contentPanel.add(createPage("我发布的商品"), "myGoods");
+
 
         // 我购买的商品
         contentPanel.add(createPage("我购买的商品"), "boughtGoods");
@@ -98,7 +97,7 @@ public class MainFrame extends JFrame {
         GoodsListPanel goodsListPanel = new GoodsListPanel();
         contentPanel.add(goodsListPanel, "goods");
         goodsButton.addActionListener(e -> {
-            goodsListPanel.refreshGoodsList();
+            goodsListPanel.refreshGoods("");
             cardLayout.show(contentPanel, "goods");
         });
 
@@ -108,7 +107,12 @@ public class MainFrame extends JFrame {
         publishButton.addActionListener(e -> cardLayout.show(contentPanel, "publish"));
 
         // 我发布的商品
-        myGoodsButton.addActionListener(e -> cardLayout.show(contentPanel, "myGoods"));
+        MyGoodsPanel myGoodsPanel = new MyGoodsPanel();
+        contentPanel.add(myGoodsPanel, "myGoods");
+        myGoodsButton.addActionListener(e -> {
+            myGoodsPanel.refreshGoods();
+            cardLayout.show(contentPanel, "myGoods");
+        });
 
         // 我购买的商品
         boughtGoodsButton.addActionListener(e -> cardLayout.show(contentPanel, "boughtGoods"));

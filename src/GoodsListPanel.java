@@ -54,11 +54,15 @@ public class GoodsListPanel extends JPanel {
         refreshGoods("");
 
     }
-    private void refreshGoods(String keyword) {
+    //加载刷新 搜索商品
+    public void refreshGoods(String keyword) {
         goodsPanel.removeAll();
         boolean found = false;
         // 遍历商品列表，搜索商品
         for (Goods goods : DataManager.goodsList) {
+            if(!"在售".equals(goods.getStatus())) {
+                continue;
+            }
             String name = goods.getName();
             if (name == null) {
                 name = "";
@@ -73,18 +77,19 @@ public class GoodsListPanel extends JPanel {
             goodsPanel.add(itemPanel);
             goodsPanel.add(Box.createVerticalStrut(5));
 
-            if (!found) {
-                JLabel emptyLabel = new JLabel(keyword.isEmpty() ? "目前还没有商品" : "没有找到相关商品");
-                emptyLabel.setFont(new Font("微软雅黑", Font.PLAIN, 18));
-                emptyLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-                goodsPanel.add(emptyLabel);
-                goodsPanel.add(Box.createVerticalStrut(30));
-            }
-            goodsPanel.revalidate();
-            goodsPanel.repaint();
         }
+        if (!found) {
+            JLabel emptyLabel = new JLabel(keyword.isEmpty() ? "目前还没有商品" : "没有找到相关商品");
+            emptyLabel.setFont(new Font("微软雅黑", Font.PLAIN, 18));
+            emptyLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            goodsPanel.add(emptyLabel);
+            goodsPanel.add(Box.createVerticalStrut(30));
+        }
+        goodsPanel.revalidate();
+        goodsPanel.repaint();
     }
+    //创建商品卡片
     private JPanel createGoodsItem(Goods goods) {
         // 创建商品卡片
         JPanel itemPanel = new JPanel(new BorderLayout(10,5));
@@ -124,10 +129,7 @@ public class GoodsListPanel extends JPanel {
         itemPanel.add(imageLabel, BorderLayout.WEST);
         itemPanel.add(infoPanel, BorderLayout.CENTER);
 
-        // 添加商品卡片到列表
-        goodsPanel.add(itemPanel);
-        goodsPanel.add(Box.createVerticalStrut(5));
-        return goodsPanel;
+        return itemPanel;
     }
 
     // 设置商品图片
@@ -151,8 +153,5 @@ public class GoodsListPanel extends JPanel {
         }
     }
 
-    public void refreshGoodsList() {
-        refreshGoods(searchField.getText().trim());
-    }
 }
 
