@@ -4,6 +4,7 @@ public class DataManager {
     public static UserBST userBST=new UserBST();
     public static User currentUser;
     public static ArrayList<Goods> goodsList=new ArrayList<>();
+    public static int nextGoodsId = 1001;
     public static void initAdmin(){
         String username="admin";
         if(userBST.search(username)!=null){

@@ -122,7 +122,7 @@ public class PublishGoodsPanel extends JPanel {
             }
 
             //商品ID
-            int goodsId = DataManager.goodsList.size() + 1;
+            int goodsId = DataManager.nextGoodsId++;
 
             //获取当前用户ID
             int sellerId = DataManager.currentUser.getId();
