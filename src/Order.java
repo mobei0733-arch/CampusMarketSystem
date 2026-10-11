@@ -1,20 +1,22 @@
 public class Order {
-    private int id;          // 订单ID
+    private long id;          // 订单ID
     private int goodsId;    // 商品ID
     private int buyerId;    // 买家ID
     private int sellerId;   // 卖家ID
     private double price;// 成交价格
+    private String status;// 订单状态
 
-    public Order(int id, int goodsId, int buyerId,
-                 int sellerId, double price) {
+    public Order(long id, int goodsId, int buyerId,
+                 int sellerId, double price,String status) {
         this.id = id;
         this.goodsId = goodsId;
         this.buyerId = buyerId;
         this.sellerId = sellerId;
         this.price = price;
+        this.status=status;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -32,5 +34,9 @@ public class Order {
 
     public double getPrice() {
         return price;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }

@@ -7,7 +7,12 @@ public class GoodsListPanel extends JPanel {
     private JTextField searchField;
     // 商品列表
     private JPanel goodsPanel;
-    public GoodsListPanel() {
+    // 是否为管理员模式
+    private boolean adminMode;
+
+    public GoodsListPanel(boolean adminMode) {
+        this.adminMode=adminMode;
+
         setLayout(new BorderLayout(10, 10));
         setBackground(Color.white);
 
@@ -22,7 +27,25 @@ public class GoodsListPanel extends JPanel {
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
         searchPanel.add(clearButton);
-        add(searchPanel, BorderLayout.NORTH);
+
+
+        // 排序
+        JPanel sortPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton defaultButton=new JButton("默认排序");
+        JButton priceUpButton=new JButton("价格升序");
+        JButton priceDownButton=new JButton("价格降序");
+
+        sortPanel.add(defaultButton);
+        sortPanel.add(priceUpButton);
+        sortPanel.add(priceDownButton);
+
+        JPanel topPanel=new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel,BoxLayout.Y_AXIS));
+        topPanel.add(searchPanel);
+        topPanel.add(sortPanel);
+
+        add(topPanel,BorderLayout.NORTH);
+
 
         // 商品列表
         goodsPanel = new JPanel();
@@ -53,14 +76,34 @@ public class GoodsListPanel extends JPanel {
         //初次加载商品
         refreshGoods("");
 
+        //默认排序
+        defaultButton.addActionListener(e -> {
+            refreshGoods(searchField.getText().trim());
+        });
+
+        //价格升序
+        priceUpButton.addActionListener(e -> {
+            GoodsSort.sortPrice(DataManager.showGoodsList,true);
+            refreshShowGoods();
+        });
+
+        //价格降序
+        priceDownButton.addActionListener(e -> {
+            GoodsSort.sortPrice(DataManager.showGoodsList,false);
+            refreshShowGoods();
+        });
+
     }
+
     //加载刷新 搜索商品
     public void refreshGoods(String keyword) {
         goodsPanel.removeAll();
         boolean found = false;
-        // 遍历商品列表，搜索商品
+        DataManager.showGoodsList.clear();
+
+        // 商品列表，搜索商品
         for (Goods goods : DataManager.goodsList) {
-            if(!"在售".equals(goods.getStatus())) {
+            if(!adminMode && !"在售".equals(goods.getStatus())) {
                 continue;
             }
             String name = goods.getName();
@@ -73,6 +116,8 @@ public class GoodsListPanel extends JPanel {
             found = true;
 
             // 创建商品卡片并添加到列表
+            DataManager.showGoodsList.add(goods);
+
             JPanel itemPanel = createGoodsItem(goods);
             goodsPanel.add(itemPanel);
             goodsPanel.add(Box.createVerticalStrut(5));
@@ -94,8 +139,16 @@ public class GoodsListPanel extends JPanel {
         // 创建商品卡片
         JPanel itemPanel = new JPanel(new BorderLayout(10,5));
         itemPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        itemPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
-        itemPanel.setPreferredSize(new Dimension(650, 120));
+        if(adminMode){
+            itemPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE,150));
+        }else{
+            itemPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE,120));
+        }
+        if(adminMode){
+            itemPanel.setPreferredSize(new Dimension(650, 150));
+        }else{
+            itemPanel.setPreferredSize(new Dimension(650, 120));
+        }
         itemPanel.setBackground(Color.WHITE);
 
         //商品信息
@@ -108,8 +161,21 @@ public class GoodsListPanel extends JPanel {
         JLabel priceLabel = new JLabel("价格：¥" + goods.getPrice());
         JLabel categoryLabel = new JLabel("分类：" + goods.getCategory());
         JLabel descriptionLabel = new JLabel("描述：" + goods.getDescription());
-        JLabel sellerLabel = new JLabel("卖家ID：" + goods.getSellerId());
+
+        JLabel sellerLabel = new JLabel();
+        if(!adminMode && goods.getSellerId()==DataManager.currentUser.getId()){
+            sellerLabel = new JLabel("卖家ID：" + goods.getSellerId()+"（我的商品）");
+        }
+        else {
+            sellerLabel = new JLabel("卖家ID：" + goods.getSellerId());
+        }
         JLabel statusLabel = new JLabel("状态：" + goods.getStatus());
+
+        //买家信息（仅管理员模式下显示）
+        JLabel buyerLabel=null;
+        if(adminMode){
+            buyerLabel=new JLabel(getBuyerInfo(goods));
+        }
 
         infoPanel.add(nameLabel);
         infoPanel.add(priceLabel);
@@ -117,6 +183,10 @@ public class GoodsListPanel extends JPanel {
         infoPanel.add(descriptionLabel);
         infoPanel.add(sellerLabel);
         infoPanel.add(statusLabel);
+
+        if(adminMode){
+            infoPanel.add(buyerLabel);
+        }
 
         // 商品图片
         JLabel imageLabel = new JLabel();
@@ -128,6 +198,19 @@ public class GoodsListPanel extends JPanel {
 
         itemPanel.add(imageLabel, BorderLayout.WEST);
         itemPanel.add(infoPanel, BorderLayout.CENTER);
+
+        // 购买按钮
+        JPanel buttonPanel=new JPanel();
+        //判断是不是自己的商品
+        if(!adminMode && goods.getSellerId()!=DataManager.currentUser.getId()){
+            //不是自己的商品，可购买
+            JButton buyButton=new JButton("购买商品");
+            buyButton.addActionListener(e -> {
+                buyGoods(goods);
+            });
+            buttonPanel.add(buyButton);
+        }
+        itemPanel.add(buttonPanel,BorderLayout.SOUTH);
 
         return itemPanel;
     }
@@ -151,6 +234,62 @@ public class GoodsListPanel extends JPanel {
         } else {
             imageLabel.setText("暂无图片");
         }
+    }
+
+    private void buyGoods(Goods goods) {
+        int result=JOptionPane.showConfirmDialog(
+                this,
+                "确定购买该商品吗？",
+                "购买确认",
+                JOptionPane.YES_NO_OPTION
+        );
+
+
+        if(result!=JOptionPane.YES_OPTION){
+            return;
+        }
+
+        long orderId=DataManager.nextOrderId++;
+        //当前用户为买家
+        int buyerId=DataManager.currentUser.getId();
+        Order order=new Order(orderId,
+                goods.getId(),
+                buyerId,
+                goods.getSellerId(),
+                goods.getPrice(),
+                "已购买");
+
+
+        //加入订单列表
+        DataManager.orderList.add(order);
+
+
+        //修改商品状态
+        goods.setStatus("已售出");
+        JOptionPane.showMessageDialog(this, "购买成功");
+
+        refreshGoods("");
+    }
+    private void refreshShowGoods(){
+        goodsPanel.removeAll();
+
+        for(Goods goods:DataManager.showGoodsList) {
+            JPanel itemPanel = createGoodsItem(goods);
+
+            goodsPanel.add(itemPanel);
+            goodsPanel.add(Box.createVerticalStrut(5));
+        }
+        goodsPanel.revalidate();
+        goodsPanel.repaint();
+    }
+    //获取买家信息(仅管理员模式下显示)
+    private String getBuyerInfo(Goods goods){
+        for(Order order:DataManager.orderList){
+            if(order.getGoodsId()==goods.getId()){
+                return "买家ID："+order.getBuyerId();
+            }
+        }
+        return "暂无买家";
     }
 
 }

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 public class HashMap {
     private static int size=16;
     private Node[] table;
@@ -65,5 +66,20 @@ public class HashMap {
             current=current.next;
         }
         return false;
+    }
+
+    //遍历
+    public ArrayList<User> getAllUsers(){
+        ArrayList<User> list=new ArrayList<>();
+        //遍历哈希表
+        for(int i=0;i<table.length;i++){
+            Node current=table[i];
+            //遍历链表
+            while(current!=null){
+                list.add(current.value);
+                current=current.next;
+            }
+        }
+        return list;
     }
 }

@@ -132,6 +132,7 @@ public class PublishGoodsPanel extends JPanel {
 
             //保存商品
             DataManager.goodsList.add(goods);
+            DataManager.showGoodsList.add(goods);
 
            //提示发布成功
            JOptionPane.showMessageDialog(this, "商品发布成功");

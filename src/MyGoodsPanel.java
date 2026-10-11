@@ -58,18 +58,28 @@ public class MyGoodsPanel extends JPanel {
             infoPanel.add(new JLabel("价格："+goods.getPrice()));
             infoPanel.add(new JLabel("分类："+goods.getCategory()));
             infoPanel.add(new JLabel("商品描述："+goods.getDescription()));
-            infoPanel.add(new JLabel("状态："+goods.getStatus()));
+            //判断商品状态
+            if(goods.getStatus().equals("已售出")){
+                infoPanel.add(new JLabel("状态：已售出"));
+
+                Order order=findOrder(goods.getId());
+                if(order!=null){
+                    infoPanel.add(new JLabel("订单编号："+order.getId()));
+                    infoPanel.add(new JLabel("购买用户ID："+order.getBuyerId()));
+                }
+            }else{
+                infoPanel.add(new JLabel("状态："+goods.getStatus()));
+            }
 
             itemPanel.add(infoPanel,BorderLayout.CENTER);
 
             //修改商品
-            JButton changeButton=new JButton("修改商品");
-            changeButton.addActionListener(e ->{
-                changeGoods(goods);
-            });
-
             JPanel buttonPanel=new JPanel();
-            buttonPanel.add(changeButton);
+            if(!goods.getStatus().equals("已售出")){
+                JButton changeButton=new JButton("修改商品");
+                changeButton.addActionListener(e ->{changeGoods(goods);});
+                buttonPanel.add(changeButton);
+            }
 
             //下架
            if(goods.getStatus().equals("在售")){
@@ -261,6 +271,15 @@ public class MyGoodsPanel extends JPanel {
         }else{
             imageLabel.setText("暂无图片");
         }
+    }
+
+    private Order findOrder(int goodsId){
+        for(Order order:DataManager.orderList){
+            if(order.getGoodsId()==goodsId){
+                return order;
+            }
+        }
+        return null;
     }
 
 }

@@ -3,7 +3,7 @@ import java.awt.*;
 
 
 public class RegisterFrame extends JFrame {
-    private static int nextUserid=202600001;
+
 
     public RegisterFrame(){
         setTitle("用户注册");
@@ -89,10 +89,10 @@ public class RegisterFrame extends JFrame {
             }
 
             //创建保存用户
-            User user=new User(nextUserid,username,password,"user");
-            DataManager.users.put(nextUserid,user);
+            User user=new User(DataManager.nextUserid,username,password,"user");
+            DataManager.users.put(user.getId(),user);
             DataManager.userBST.insert(user);
-            nextUserid++;
+            DataManager.nextUserid++;
             //注册成功
             JOptionPane.showMessageDialog(this,"注册成功！");
         });
